@@ -49,4 +49,4 @@ This program's binaries have only been thoroughly tested on Linux, not on Mac or
 
 The license may be found in the `LICENSE` file above.
 
-Initially supplied binaries have been compiled using 1.7rc6 go tools due to improved code generation and then packed using upx to reduce the humongous binary size that go programs have due to static linking - upx has been known to cause issues with certain software. If you're running that certain scamware of the antivirus variety, you may safely add the binary to its exception list if that scamware throws up a nag - or if you don't trust the binary, compile the program yourself.
+Initially supplied binaries have been compiled using 1.7rc6 go tools due to improved code generation and then packed using upx to reduce the humongous binary size that go programs have due to static linking - upx has been known to cause issues with certain software.
