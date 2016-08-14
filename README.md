@@ -1,7 +1,5 @@
 # strimgo
 
-A minimalist twitch.tv text user interface stream display for graphical terminal emulators, written in Go.
-
 ![preview](https://i.imgur.com/b4XASwv.png)
 
 Strimgo by default looks for a file called `.strimgo`, which is a list of streams separated by newlines, present in your home directory, unless you specify a file. Streams will only show up in the viewer if they are actually online and the width of the three columns (channel name, game name, stream title) is automatically adjusted to match the longest entry of all online streams. `livestreamer` needs to be visible in `$PATH`.
