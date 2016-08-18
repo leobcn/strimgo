@@ -1,3 +1,9 @@
+/*
+Copyright (c) 2016 Muffindrake <muffindrake@gmail.com>
+The full license text of the MIT license this work is 
+licensed under may be found in the LICENSE file.
+*/
+
 package main
 
 import (
@@ -30,7 +36,7 @@ var help string = "strimgo " + vid + "\n"+
          "h/l           scroll left/right\n"+
          "Home/End      go to start/end\n"+
          "Enter         run stream using medium,source quality\n"+
-         "SHLMWA        use source/high/low/mobile/worst/audio\n"+
+         "S/H/L/M/W/A   use source/high/low/mobile/worst/audio instead\n"+
          "B             open stream page in browser\n"+
          "C             open chat popout in browser\n"+
          "V             open stream player popout in browser\n"+
@@ -38,6 +44,8 @@ var help string = "strimgo " + vid + "\n"+
 
          "Mouse: scroll up/down, left click (run stream using keyboard)\n"+
          "$HOME/.strimgo is used as default file, if unspecified\n"+
+         "On Windows systems, the current directory is searched instead\n" +
+         "and the file is named strimgo.txt\n" +
          "File consists of a list of channel names, separated by newlines\n"+
          "Loading random files is a terrible idea\n"+
          "Make sure there are no empty lines or trailing spaces\n"+
