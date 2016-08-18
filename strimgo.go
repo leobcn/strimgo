@@ -79,7 +79,7 @@ const (
 
 func main() {
         if runtime.GOOS == "windows" {
-		path = os.ExpandEnv("%userprofile%\\.strimgo")
+		path = "./strimgo"
         } else {path = os.ExpandEnv("$HOME/.strimgo")}
 
         switch {
