@@ -323,14 +323,23 @@ func chk_stat(client *http.Client) {
         for i, s := range strm {
                 go func(i int, s string) {
                         resp, err := client.Get(tapi+s+"?clientid="+cid)
-                        if err != nil {log.Fatal("Error API:", err)
+                        if err != nil {
+                        	tbox.Close()
+                        	log.Fatal(err)
                         } else {
+                                defer resp.Body.Close()
                                 var m map[string]interface{}
 
                                 js, err := ioutil.ReadAll(resp.Body)
-                                if err != nil {log.Fatal("Error ReadAll:", err)}
+                                if err != nil {
+                                	tbox.Close()
+                                	log.Fatal(err)
+                                }
                                 err = json.Unmarshal(js, &m)
-                                if err != nil {log.Fatal("Error JSON:", err)}
+                                if err != nil {
+                                	tbox.Close()
+                                	log.Fatal(err)
+                                }
 
                                 if m["stream"] != nil {
                                         stat[i] = true
@@ -347,9 +356,7 @@ func chk_stat(client *http.Client) {
                                         mutex.Unlock()
                                 }
                         }
-                        defer resp.Body.Close()
                         done<-true
-
                 }(i, s)
         }
 
@@ -393,8 +400,7 @@ func chk_stat(client *http.Client) {
 func exc(q string) {
         if len(index) == 0 {
                 tbox.Close()
-                fmt.Println("No streams online.")
-                os.Exit(0)
+                log.Fatal("No streams online.")
         }
         cmd := exec.Command("livestreamer", "twitch.tv/" + strm[index[cur]], q)
         cmd.Start()
@@ -403,8 +409,7 @@ func exc(q string) {
 func page(o int) {
         if len(index) == 0 {
                 tbox.Close()
-                fmt.Println("No streams online.")
-                os.Exit(0)
+                log.Fatal("No streams online.")
         }
 
         var p string
