@@ -2,7 +2,7 @@
 
 ![preview](https://i.imgur.com/b4XASwv.png)
 
-Strimgo by default looks for a file called `.strimgo`, which is a list of streams separated by newlines, present in your home directory, unless you specify a file. Streams will only show up in the viewer if they are actually online and the width of the three columns (channel name, game name, stream title) is automatically adjusted to match the longest entry of all online streams. `livestreamer` needs to be visible in `$PATH`.
+Strimgo by default looks for a file called `.strimgo`, which is a list of streams separated by newlines, present in your home directory, unless you specify a file. For Windows users, the file is searched in the current directory by default and is named `strimgo.txt`. Streams will only show up in the viewer if they are actually online and the width of the three columns (channel name, game name, stream title) is automatically adjusted to match the longest entry of all online streams. `livestreamer` needs to be visible in `$PATH`.
 
 ### Usage
 
@@ -45,8 +45,4 @@ As mentioned above, the file is a list of channels, with one channel per line. C
 
 ### Notes
 
-This program's binaries have only been thoroughly tested on Linux, not on Mac or Windows. **Use this program at your own risk.**
-
 The license may be found in the `LICENSE` file above.
-
-Initially supplied binaries have been compiled using 1.7rc6 go tools due to improved code generation and then packed using upx to reduce the humongous binary size that go programs have due to static linking - upx has been known to cause issues with certain software.
