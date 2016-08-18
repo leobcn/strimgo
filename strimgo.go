@@ -79,7 +79,7 @@ const (
 
 func main() {
         if runtime.GOOS == "windows" {
-		path = os.ExpandEnv("%userprofile%/.strimgo")
+		path = os.ExpandEnv("%userprofile%\\.strimgo")
         } else {path = os.ExpandEnv("$HOME/.strimgo")}
 
         switch {
@@ -107,8 +107,7 @@ func main() {
         tbox.HideCursor()
         tbox.SetInputMode(tbox.InputEsc | tbox.InputMouse)
         w, h = tbox.Size()
-        <-file_done
-        if <-env_done {chk_stat(client)}
+        if <-file_done; <-env_done {chk_stat(client)}
 
         draw_all()
 main_loop:
@@ -303,10 +302,9 @@ func draw_all() {
                                         r,
                                         DEF,
                                         DEF)}
-                        if k != 1 {
-                                for ;k != 1; k-- {
-                                        c++
-                                }
+                                        
+                        for ;k != 1; k-- {
+                                c++
                         }
                 }
         }
