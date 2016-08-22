@@ -309,8 +309,8 @@ func draw_all() {
                                 tbox.SetCell(x - scr_x, y - scr_y,
                                         r,
                                         DEF,
-                                        DEF)}
-                                        
+                                        DEF)
+                        }
                         for ;k != 1; k-- {
                                 c++
                         }
@@ -325,11 +325,14 @@ func chk_stat(client *http.Client) {
         stat = make([]bool, len(strm))
         index = make([]int, 0)
         map_s_g_t = make(map[string]*[2]string, 0)
+
         mutex := &sync.Mutex{}
-        done := make(chan bool)
+        var wg sync.WaitGroup
 
         for i, s := range strm {
+                wg.Add(1)
                 go func(i int, s string) {
+                        defer wg.Done()
                         resp, err := client.Get(tapi+s+"?clientid="+cid)
                         if err != nil {
                         	tbox.Close()
@@ -364,38 +367,36 @@ func chk_stat(client *http.Client) {
                                         mutex.Unlock()
                                 }
                         }
-                        done<-true
                 }(i, s)
         }
 
-        for range strm {
-                <-done
-        }
-
+        wg.Wait()
+        
+        wg.Add(3)
         go func() {
+                defer wg.Done()
                 for i, v := range stat {
                         if v == true {index = append(index, i)}
                 }
-                done<-true
         }()
 
         g_fmt = 0
         go func() {
+                defer wg.Done()
                 for _, v := range map_s_g_t {
                         if g_fmt < len(v[0]) {g_fmt = len(v[0])}
                 }
-                done<-true
         }()
 
         t_fmt = 0
         go func() {
+                defer wg.Done()
                 for _, v := range map_s_g_t {
                         if t_fmt < len(v[1]) {t_fmt = len(v[1])}
                 }
-                done<-true
         }()
 
-        for i := 0; i < 3; i++ {<-done}
+        wg.Wait()
 
         c_fmt = 0
         for _, v := range index {
