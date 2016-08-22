@@ -205,7 +205,7 @@ main_loop:
                                 break event_loop
                         case tbox.KeyArrowRight:
                                 scr_x = scr_x + 8
-                                if scr_x > dif {scr_x = dif - dif % 8}
+                                if scr_x > dif-w+8 {scr_x = scr_x - 8}
                                 break event_loop
                         case tbox.KeyArrowLeft:
                                 scr_x = scr_x - 8
@@ -253,7 +253,7 @@ main_loop:
                                 }
                         case 'l':
                                 scr_x = scr_x + 8
-                                if scr_x > dif {scr_x = dif - dif % 8}
+                                if scr_x > dif-w+8 {scr_x = scr_x - 8}
                         case 'h':
                                 scr_x = scr_x - 8
                                 if scr_x < 0 {scr_x = 0}
