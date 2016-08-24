@@ -329,34 +329,34 @@ func chk_stat(client *http.Client) {
         mutex := &sync.Mutex{}
         var wg sync.WaitGroup
 
-        for i, s := range strm {
+        for i := 0; i < len(strm); i++ {
                 wg.Add(1)
-                go func(i int, s string) {
+                go func(i int, s *string) {
                         defer wg.Done()
-                        resp, err := client.Get(tapi+s+"?clientid="+cid)
+                        resp, err := client.Get(tapi+*s+"?clientid="+cid)
                         if err != nil {
-                        	tbox.Close()
-                        	log.Fatal(err)
+                                tbox.Close()
+                                log.Fatal(err)
                         } else {
                                 defer resp.Body.Close()
                                 var m map[string]interface{}
 
                                 js, err := ioutil.ReadAll(resp.Body)
                                 if err != nil {
-                                	tbox.Close()
-                                	log.Fatal(err)
+                                        tbox.Close()
+                                        log.Fatal(err)
                                 }
                                 err = json.Unmarshal(js, &m)
                                 if err != nil {
-                                	tbox.Close()
-                                	log.Fatal(err)
+                                        tbox.Close()
+                                        log.Fatal(err)
                                 }
 
                                 if m["stream"] != nil {
                                         stat[i] = true
 
                                         mutex.Lock()
-                                        map_s_g_t[s] = &[2]string{
+                                        map_s_g_t[*s] = &[2]string{
                                         m["stream"].(
                                         map[string]interface{})["game"].(
                                         string),
@@ -367,16 +367,16 @@ func chk_stat(client *http.Client) {
                                         mutex.Unlock()
                                 }
                         }
-                }(i, s)
+                }(i, &strm[i])
         }
 
         wg.Wait()
-        
+
         wg.Add(3)
         go func() {
                 defer wg.Done()
-                for i, v := range stat {
-                        if v == true {index = append(index, i)}
+                for i := 0; i < len(stat); i++ {
+                        if stat[i] == true {index = append(index, i)}
                 }
         }()
 
@@ -399,8 +399,8 @@ func chk_stat(client *http.Client) {
         wg.Wait()
 
         c_fmt = 0
-        for _, v := range index {
-                if c_fmt < len(strm[v]) {c_fmt = len(strm[v])}
+        for i := 0; i < len(index); i++ {
+                if c_fmt < len(strm[index[i]]) {c_fmt = len(strm[index[i]])}
         }
 
         dif = c_fmt + g_fmt + t_fmt + 2
