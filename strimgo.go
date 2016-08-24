@@ -80,7 +80,7 @@ const (
         PAGE_CHAT_POPOUT
         PAGE_VIDEO_POPOUT
 
-        vid     = "v0"
+        vid     = "v1"
         cid     = "strimgo_" + vid
         tapi    = "https://api.twitch.tv/kraken/streams/"
 )
