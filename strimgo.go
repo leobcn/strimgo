@@ -272,6 +272,9 @@ func left_click(e *tbox.Event) {
 			if scr_y < 0 {
 				scr_y = 0
 			}
+			if scr_y > len(index)-h {
+				scr_y = len(index) - h
+			}
 		} else {
 			cur = e.MouseY
 		}
