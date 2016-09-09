@@ -398,6 +398,7 @@ func chk_stat(client *http.Client) {
         }
 
         dif = c_fmt + g_fmt + t_fmt + 2
+	runtime.GC()
 }
 
 func exc(q string) {
