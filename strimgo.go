@@ -86,7 +86,6 @@ const (
 
 type ttvapi struct {
 	Stream struct {
-		Game string `json:"game"`
 		Channel struct {
 			Status string `json:"status"`
 			Game string `json:"game"`
