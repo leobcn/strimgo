@@ -44,8 +44,8 @@ var help string = "strimgo " + vid + "\n"+
 
          "Mouse: scroll up/down, left click (run stream using keyboard)\n"+
          "$HOME/.strimgo is used as default file, if unspecified\n"+
-         "On Windows systems, the current directory is searched instead\n" +
-         "and the file is named strimgo.txt\n" +
+         "On Windows systems, the current directory is searched instead\n"+
+         "and the file is named strimgo.txt\n"+
          "File consists of a list of channel names, separated by newlines\n"+
          "Loading random files is a terrible idea\n"+
          "Make sure there are no empty lines or trailing spaces\n"+
@@ -80,10 +80,19 @@ const (
         PAGE_CHAT_POPOUT
         PAGE_VIDEO_POPOUT
 
-        vid     = "v1"
-        cid     = "strimgo_" + vid
+        vid     = "v2"
         tapi    = "https://api.twitch.tv/kraken/streams/"
 )
+
+type ttvapi struct {
+	Stream struct {
+		Game string `json:"game"`
+		Channel struct {
+			Status string `json:"status"`
+			Game string `json:"game"`
+		} `json:"channel"`
+	} `json:"stream"`
+}
 
 func main() {
         if runtime.GOOS == "windows" {
@@ -125,48 +134,13 @@ main_loop:
                 case tbox.EventMouse:
                         switch e.Key {
                         case tbox.MouseWheelUp:
-                                if cur == 0 {
-                                        cur = len(index) - 1
-                                        if len(index) > h {
-                                                scr_y = len(index) - h + 1
-                                        }
-                                        break event_loop
-                                } else {cur--}
-
-                                if len(index) > h && scr_y != 0 {
-                                        scr_y--
-                                }
-
+				scroll_up()
                                 break event_loop
                         case tbox.MouseWheelDown:
-                                if cur == len(index)-1 {
-                                        cur = 0
-                                        if len(index) > h {
-                                                scr_y = 0
-                                        }
-                                        break event_loop
-                                } else {cur++}
-
-                                if len(index) > h && scr_y != len(index)-h+1 {
-                                        scr_y++
-                                }
-
+				scroll_down()
                                 break event_loop
                         case tbox.MouseLeft:
-                                if e.MouseY < len(index) {
-                                        if len(index) > h {
-                                                cur = scr_y + e.MouseY
-						if cur > len(index)-1 {
-							cur = len(index) - 1
-						}
-						scr_y = cur - 1
-						if scr_y < 0 {
-							scr_y = 0
-						}
-					} else {
-                                                cur = e.MouseY
-                                        }
-                                }
+                                left_click(&e)
                         }
                 case tbox.EventKey:
                         switch e.Key {
@@ -176,41 +150,17 @@ main_loop:
                                 exc("medium,source")
                                 break event_loop
                         case tbox.KeyArrowUp:
-                                if cur == 0 {
-                                        cur = len(index) - 1
-                                        if len(index) > h {
-                                                scr_y = len(index) - h + 1
-                                        }
-                                        break event_loop
-                                } else {cur--}
-
-                                if len(index) > h && scr_y != 0 {
-                                        scr_y--
-                                }
-
+				scroll_up()
                                 break event_loop
                         case tbox.KeyArrowDown:
-                                if cur == len(index)-1 {
-                                        cur = 0
-                                        if len(index) > h {
-                                                scr_y = 0
-                                        }
-                                        break event_loop
-                                } else {cur++}
-
-                                if len(index) > h && scr_y != len(index)-h+1 {
-                                        scr_y++
-                                }
-
+				scroll_down()
                                 break event_loop
                         case tbox.KeyArrowRight:
-                                scr_x = scr_x + 8
-                                if scr_x > dif-w+8 {scr_x = scr_x - 8}
-                                break event_loop
+                                scroll_right()
+				break event_loop
                         case tbox.KeyArrowLeft:
-                                scr_x = scr_x - 8
-                                if scr_x < 0 {scr_x = 0}
-                                break event_loop
+                                scroll_left()
+				break event_loop
                         case tbox.KeyHome:
                                 cur, scr_x, scr_y = 0, 0, 0
                                 break event_loop
@@ -228,35 +178,13 @@ main_loop:
                         case 'R':
                                 chk_stat(client)
                         case 'k':
-                                if cur == 0 {
-                                        cur = len(index) - 1
-                                        if len(index) > h {
-                                                scr_y = len(index) - h + 1
-                                        }
-                                        break
-                                } else {cur--}
-
-                                if len(index) > h && scr_y != 0 {
-                                        scr_y--
-                                }
+                                scroll_up()
                         case 'j':
-                                if cur == len(index)-1 {
-                                        cur = 0
-                                        if len(index) > h {
-                                                scr_y = 0
-                                        }
-                                        break
-                                } else {cur++}
-
-                                if len(index) > h && scr_y != len(index)-h+1 {
-                                        scr_y++
-                                }
+                                scroll_down()
                         case 'l':
-                                scr_x = scr_x + 8
-                                if scr_x > dif-w+8 {scr_x = scr_x - 8}
+                                scroll_right()
                         case 'h':
-                                scr_x = scr_x - 8
-                                if scr_x < 0 {scr_x = 0}
+                                scroll_left()
                         case 'S':
                                 exc("source")
                         case 'H':
@@ -284,6 +212,61 @@ main_loop:
                 draw_all()
         }
 
+}
+
+func scroll_down() {
+	if cur == len(index)-1 {
+		cur = 0
+                if len(index) > h {
+			scr_y = 0
+                }
+                return
+        } else {cur++}
+
+	if len(index) > h && scr_y != len(index)-h+1 {
+		scr_y++
+	}
+}
+
+func scroll_up() {
+	if cur == 0 {
+		cur = len(index) - 1
+		if len(index) > h {
+			scr_y = len(index) - h + 1
+		}
+		return
+	} else {cur--}
+
+	if len(index) > h && scr_y != 0 {
+		scr_y--
+	}
+}
+
+func scroll_left() {
+	scr_x = scr_x - 8
+        if scr_x < 0 {scr_x = 0}
+}
+
+func scroll_right() {
+	scr_x = scr_x + 8
+        if scr_x > dif-w+8 {scr_x = scr_x - 8}
+}
+
+func left_click(e *tbox.Event) {
+	if e.MouseY < len(index) {
+		if len(index) > h {
+			cur = scr_y + e.MouseY
+			if cur > len(index)-1 {
+				cur = len(index) - 1
+			}
+			scr_y = cur - 1
+			if scr_y < 0 {
+				scr_y = 0
+			}
+		} else {
+			cur = e.MouseY
+		}
+	}
 }
 
 func draw_all() {
@@ -333,13 +316,20 @@ func chk_stat(client *http.Client) {
                 wg.Add(1)
                 go func(i int, s *string) {
                         defer wg.Done()
-                        resp, err := client.Get(tapi+*s+"?clientid="+cid)
+			req, err := http.NewRequest("GET",
+				tapi+*s, nil)
+			req.Header.Set(
+				"Accept", "application/vnd.twitchtv.v3+json")
+			req.Header.Set(
+				"Client-ID", "strimgo_"+vid)
+
+			resp, err := client.Do(req)
                         if err != nil {
                                 tbox.Close()
                                 log.Fatal(err)
                         } else {
                                 defer resp.Body.Close()
-                                var m map[string]interface{}
+                                var m ttvapi
 
                                 js, err := ioutil.ReadAll(resp.Body)
                                 if err != nil {
@@ -352,18 +342,13 @@ func chk_stat(client *http.Client) {
                                         log.Fatal(err)
                                 }
 
-                                if m["stream"] != nil {
+                                if m.Stream.Channel.Game != "" {
                                         stat[i] = true
 
                                         mutex.Lock()
                                         map_s_g_t[*s] = &[2]string{
-                                        m["stream"].(
-                                        map[string]interface{})["game"].(
-                                        string),
-                                        m["stream"].(
-                                        map[string]interface{})["channel"].(
-                                        map[string]interface{})["status"].(
-                                        string)}
+						m.Stream.Channel.Game,
+						m.Stream.Channel.Status}
                                         mutex.Unlock()
                                 }
                         }
