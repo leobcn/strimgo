@@ -12,10 +12,11 @@ strimgo [file]
     R               refresh stream view, check for online streams
     Q/Escape        quit
     Up/Down k/j     scroll up/down
+    K/J             scroll vertically 5 elements at a time
     Left/Right
     h,l             scroll left/right
     Home/End        scroll to start/end
-    Enter           run livestreamer with channel name and `medium,source` as arguments
+    Enter           run livestreamer with channel name and "medium,source" as arguments
     S/H/L/M/W/A     use source/high/low/mobile/worst/audio quality instead
     B               open stream page in default web browser
     C               open chat popout page in default web browser
@@ -31,7 +32,7 @@ Keep in mind that there is no intention of rate-limiting your keyboard - strimgo
 
 ### Stream list
 
-As mentioned above, the file is a list of channels, with one channel per line. Clear it of any spaces or tabs and make sure you write the channel names correctly.
+As mentioned above, the file is a list of channels, with one channel per line. Clear it of any spaces or tabs and make sure you write the channel names correctly. No sorting or checking of the streams is done.
 
 ###### Useful shell commands:
 

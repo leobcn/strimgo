@@ -32,6 +32,7 @@ var help string = "strimgo " + vid + "\n"+
 
          "R             refresh stream status\n"+
          "Up/Down k/j   select stream\n"+
+	 "K/J           scroll vertically 5 elements at a time\n"+
          "Left/Right\n"+
          "h/l           scroll left/right\n"+
          "Home/End      go to start/end\n"+
@@ -166,7 +167,7 @@ main_loop:
                         case tbox.KeyEnd:
                                 cur = len(index) - 1
                                 if len(index) > h {
-                                        scr_y = len(index)-h+1
+                                        scr_y = len(index) - h
                                 }
                                 break event_loop
                         }
@@ -180,9 +181,13 @@ main_loop:
                                 scroll_up()
                         case 'j':
                                 scroll_down()
+			case 'K':
+				for i := 0; i < 5; i++ {scroll_up()}
+			case 'J':
+				for i := 0; i < 5; i++ {scroll_down()}
                         case 'l':
-                                scroll_right()
-                        case 'h':
+				scroll_right()
+			case 'h':
                                 scroll_left()
                         case 'S':
                                 exc("source")
@@ -219,11 +224,13 @@ func scroll_down() {
                 if len(index) > h {
 			scr_y = 0
                 }
-                return
-        } else {cur++}
-
-	if len(index) > h && scr_y != len(index)-h+1 {
-		scr_y++
+        } else {
+		cur++
+		if len(index) > h {
+			if scr_y < len(index)-h {
+				scr_y++
+			}
+		}
 	}
 }
 
@@ -231,14 +238,17 @@ func scroll_up() {
 	if cur == 0 {
 		cur = len(index) - 1
 		if len(index) > h {
-			scr_y = len(index) - h + 1
+			scr_y = len(index) - h
 		}
-		return
-	} else {cur--}
-
-	if len(index) > h && scr_y != 0 {
-		scr_y--
+	} else {
+		cur--
+		if len(index) > h {
+			if scr_y > 0 {
+				scr_y--
+			}
+		}
 	}
+
 }
 
 func scroll_left() {
